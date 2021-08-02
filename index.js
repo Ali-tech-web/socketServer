@@ -19,7 +19,6 @@ const io = socketio(server,{
 
 // Run when client connects
 io.on('connection', socket => {
-    console.log('Connected')
     
     // Creating Channel : channelId Format companyId_channel_page (8_channel_visit)
     socket.on('joinChannel',({channelId})=>{
@@ -35,8 +34,8 @@ io.on('connection', socket => {
     })
 
     // Runs when client disconnects
-    socket.on('disconnect', (companyId) => {
-        console.log('You have Disconnected',companyId)
+    socket.on('disconnect', () => {
+        // console.log('You have Disconnected')
         //socket.emit('disconnection',{message : 'You have Successfully Disconnected to Socket Server'})
     });
 });
