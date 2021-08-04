@@ -24,12 +24,17 @@ io.on('connection', socket => {
     // Creating Channel : channelId Format companyId_channel_page (8_channel_visit)
     socket.on('joinChannel',({channelId})=>{
         if (channelId){
-        //check if we successfully joined with channel
-        socket.join(channelId)
-        socket.emit('connection',{message : `You have Successfully Connected To Socket Server to channel ${channelId}`})
+            //check if we successfully joined with channel
+            try{
+                socket.join(channelId)
+                socket.emit('connection',{message : `You have Successfully Connected To Socket Server to channel ${channelId}`})
+            } catch (err){
+                socket.emit('customError',{message : `Sockets: Error joining the channel ${channelId}`}) 
+            }
+         
         } else {
               // emit handler that you channel id is not a valid id
-            socket.emit('customError',{message : 'Channel Id is not defined'})  
+            socket.emit('customError',{message : 'Sockets: Channel Id is not defined'})  
         }
       
     })
@@ -38,10 +43,15 @@ io.on('connection', socket => {
     socket.on('update',({channelId})=>{
         // Based on channelId Broadcast to all the clients of a specific channel except sender
         if (channelId){
-            socket.to(channelId).emit('call',{message : `You Need to Make Api call For ${channelId}`})
+            try{
+                socket.to(channelId).emit('call',{message : `You Need to Make Api call For ${channelId}`})
+            } catch (err){
+                socket.emit('customError',{message : 'Sockets: Error in emitting call event'}) 
+            }
+           
         } else {
             // emit handler that you channel id is not a valid id
-            socket.emit('customError',{message : 'Channel Id is not defined'})  
+            socket.emit('customError',{message : 'Sockets : Channel Id is not defined'})  
         }
     })
 
