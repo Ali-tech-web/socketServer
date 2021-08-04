@@ -3,12 +3,18 @@ const http = require('http');
 const express = require('express');
 const socketio = require('socket.io');
 var cors = require('cors')
+var bodyParser = require('body-parser')
 
 
 const app = express();
 
 // MiddleWares
 app.use(cors())
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+// parse application/json
+app.use(bodyParser.json())
+
 
 const server = http.createServer(app); // wb https
 const io = socketio(server,{
@@ -60,6 +66,12 @@ io.on('connection', socket => {
         // console.log('You have Disconnected')
         //socket.emit('disconnection',{message : 'You have Successfully Disconnected to Socket Server'})
     });
+});
+
+app.post('/ping', (req, res) => {
+    let channelId =  req.body.channelId
+    io.in(channelId).emit('call',{message : `You Need to Make Api call For ${channelId}`})
+    res.send(channelId)
 });
 
 const PORT = process.env.PORT || 5000;
