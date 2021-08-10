@@ -20,6 +20,8 @@ const server = http.createServer(app); // wb https
 const io = socketio(server,{
     cors: {
       origin: '*',
+      transport : ['websocket'],
+      credentials: false
     }
   });
 
@@ -70,8 +72,20 @@ io.on('connection', socket => {
 
 app.post('/ping', (req, res) => {
     let channelId =  req.body.channelId
-    io.in(channelId).emit('call',{message : `You Need to Make Api call For ${channelId}`})
-    res.send(channelId)
+    if (channelId){
+        try{
+            //emit 'call' to all the listeners
+            io.in(channelId).emit('call',{message : `You Need to Make Api call For ${channelId}`})
+            res.json({status: 'success',msg : `Pinged Successfully at channel : ${channelId} `})
+        } catch(err){
+            console.log('Error',err)
+            res.json({status : 'fail', msg : `Error : could not emit 'call' event at ${channelId}`})
+        }
+       return
+    } else {
+        res.json({status : 'fail', msg : 'ChannelId is not valid'})
+        return
+    }
 });
 
 const PORT = process.env.PORT || 5000;
