@@ -88,6 +88,10 @@ app.post('/ping', (req, res) => {
     }
 });
 
+app.get('/get', (req, res) => {
+    res.send('Server is Up')
+})
+
 const PORT = process.env.PORT || 5000;
 
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
